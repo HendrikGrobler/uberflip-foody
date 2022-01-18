@@ -23,6 +23,7 @@ Route::get('/healthcheck', ['uses' => 'ApiController@healthcheck']);
 
 Route::get('/users', ['uses' => 'UserController@index']);
 Route::get('/users/{userId}', ['uses' => 'UserController@show']);
+Route::patch('/users/{userId}', ['uses' => 'UserController@update']);
 
 Route::get('/users/{userId}/foods', ['uses' => 'UserFoodController@foods']);
 Route::get('/users/{userId}/foods/{foodId}', ['uses' => 'UserFoodController@food']);

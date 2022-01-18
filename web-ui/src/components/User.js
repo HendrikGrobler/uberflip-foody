@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import {toast} from 'toast-notification-alert'
 import SearchDropdown from './SearchDropdown';
 
 import '../less/global.less';
@@ -9,7 +10,9 @@ export default class Users extends React.Component {
 
   state = {
     user: {},
-    userFoods: []
+    userFoods: [],
+    updatedName: '',
+    updatedEmail: ''
   }
 
   async addFood(foodId) {
@@ -56,7 +59,12 @@ export default class Users extends React.Component {
 
   componentDidMount() {
     axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/users/${this.props.match.params.userId}`).then((response) => {
-      this.setState({user: response.data});
+      const user = response.data;
+      this.setState({
+        user,
+        updatedName: user.name,
+        updatedEmail: user.email
+      });
     })
     
     axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/users/${this.props.match.params.userId}/foods`).then((response) => {
@@ -64,13 +72,58 @@ export default class Users extends React.Component {
     });
   }
 
+  handleNameChange(name) {
+    this.setState({updatedName: name});
+  }
+
+  handleEmailChange(email) {
+    this.setState({updatedEmail: email});
+  }
+
+  async handleNameOrEmailBlur() {
+    if (!this.state.updatedName) {
+      await this.setState({updatedName: this.state.user.name});
+      alert('Name cannot be empty');
+      return;
+    }
+
+    if (!this.state.updatedEmail) {
+      await this.setState({updatedEmail: this.state.user.email});
+      alert('Email cannot be empty');
+      return;
+    }
+
+    // @todo Validate email
+
+    const nameChanged = this.state.updatedName !== this.state.user.name
+    const emailChanged = this.state.updatedEmail !== this.state.user.email
+    if (!nameChanged && !emailChanged) {
+      // Nothing to update
+      return;
+    }
+
+    const response = await axios.patch(`${process.env.REACT_APP_PUBLIC_API_URL}/users/${this.props.match.params.userId}`, {
+      name: this.state.updatedName,
+      email: this.state.updatedEmail
+    });
+
+    const user = response.data;
+    this.setState({
+      user,
+      updatedName: user.name,
+      updatedEmail: user.email
+    });
+
+    toast.show({title: 'Saved!', position: 'topcenter', type: 'info'});
+  }
+
   render() {
     return (
       <div>
         <h1>User information</h1>
         <p>ID: {this.state.user.id}</p>
-        <p>Name: {this.state.user.name}</p>
-        <p>Email: {this.state.user.email}</p>
+        <p>Name: <input type="text" value={this.state.updatedName} onChange={(event) => this.handleNameChange(event.target.value)} onBlur={() => this.handleNameOrEmailBlur()}/></p>
+        <p>Email: <input type="email" value={this.state.updatedEmail} onChange={(event) => this.handleEmailChange(event.target.value)} onBlur={() => this.handleNameOrEmailBlur()}/></p>
 
         <SearchDropdown
           inputId='food-search'
