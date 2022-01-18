@@ -18,9 +18,13 @@ class FoodController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $page = $request->input('page');
+        $limit = $request->input('limit');
         
         $response = Http::get("{$this->privateApiUrl}/foods", [
-            'search' => $search
+            'search' => $search,
+            'page' => $page,
+            'limit' => $limit,
          ]);
         return $response->json();
     }
@@ -28,6 +32,11 @@ class FoodController extends Controller
     public function show(int $foodId)
     {
         $response = Http::get("{$this->privateApiUrl}/foods/{$foodId}");
+        return $response->json();
+    }
+
+    public function count() {
+        $response = Http::get("{$this->privateApiUrl}/foods/count");
         return $response->json();
     }
 }

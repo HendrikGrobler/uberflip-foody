@@ -30,4 +30,5 @@ Route::put('/users/{userId}/foods/{foodId}', ['uses' => 'UserFoodController@addF
 Route::delete('/users/{userId}/foods/{foodId}', ['uses' => 'UserFoodController@deleteFood']);
 
 Route::get('/foods', ['uses' => 'FoodController@index']);
+Route::get('/foods/count', ['uses' => 'FoodController@count']);
 Route::get('/foods/{foodId}', ['uses' => 'FoodController@show']);

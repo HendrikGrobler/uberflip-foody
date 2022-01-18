@@ -16,9 +16,13 @@ export class FoodsService {
     return this.foodsRepository.save(createFoodDto);
   }
 
-  findAll(search: string, skip = 0, take = 25) {
+  findAll(search = '', skip = 0, take = 15) {
+    const where = {};
+    if (search) {
+      where['description'] = Like(`%${search}%`)
+    }
     return this.foodsRepository.find({
-      where: { description: Like(`%${search}%`) },
+      where,
       skip,
       take,
     });
@@ -35,5 +39,9 @@ export class FoodsService {
 
   remove(id: number) {
     return this.foodsRepository.delete({ id });
+  }
+
+  count() {
+    return this.foodsRepository.count();
   }
 }
