@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { NutrientsService } from './nutrients.service';
 import { CreateNutrientDto } from './dto/create-nutrient.dto';
@@ -22,8 +23,10 @@ export class NutrientsController {
   }
 
   @Get()
-  findAll() {
-    return this.nutrientsService.findAll();
+  findAll(
+    @Query('search') search: string,
+  ) {
+    return this.nutrientsService.findAll(search);
   }
 
   @Get(':id')
