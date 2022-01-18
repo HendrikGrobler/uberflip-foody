@@ -34,4 +34,15 @@ class UserController extends Controller
         $response = Http::get("{$this->privateApiUrl}/users/{$userId}");
         return $response->json();
     }
+
+    public function update(Request $request, int $userId)
+    {
+        $name = $request->get('name');
+        $email = $request->get('email');
+        $response = Http::patch("{$this->privateApiUrl}/users/{$userId}", [
+            'name' => $name,
+            'email' => $email,
+        ]);
+        return $response->json();
+    }
 }
