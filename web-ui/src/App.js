@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Users from './components/Users';
 import User from './components/User';
 import Foods from './components/Foods';
+import Food from './components/Food';
 import Error from './components/Error';
 import Navigation from './components/Navigation';
 
@@ -21,6 +22,7 @@ class App extends Component {
             <Route path="/users" component={Users} exact />
             <Route path="/users/:userId" component={User} />
             <Route path="/foods" component={Foods} exact/>
+            <Route path="/foods/:foodId" component={Food} />
             <Route component={Error} />
           </Switch>
         </div>

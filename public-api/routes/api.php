@@ -31,3 +31,10 @@ Route::delete('/users/{userId}/foods/{foodId}', ['uses' => 'UserFoodController@d
 
 Route::get('/foods', ['uses' => 'FoodController@index']);
 Route::get('/foods/{foodId}', ['uses' => 'FoodController@show']);
+
+Route::get('/nutrients', ['uses' => 'NutrientController@index']);
+
+Route::get('/foods/{foodId}/nutrients', ['uses' => 'FoodNutrientController@nutrients']);
+Route::get('/foods/{foodId}/nutrients/{nutrientId}', ['uses' => 'FoodNutrientController@nutrient']);
+Route::put('/foods/{foodId}/nutrients/{nutrientId}', ['uses' => 'FoodNutrientController@addNutrient']);
+Route::delete('/foods/{foodId}/nutrients/{nutrientId}', ['uses' => 'FoodNutrientController@deleteNutrient']);
