@@ -1,6 +1,7 @@
 import React from 'react';
 
 import '../less/global.less';
+import '../less/search-dropdown.less';
 
 export default class SearchDropdown extends React.Component {
 
@@ -65,8 +66,13 @@ export default class SearchDropdown extends React.Component {
   }
 
   render() {
+    const dropdownClasses = ['search-dropdown'];
+    if (!this.state.isDropdownVisible) {
+      dropdownClasses.push('hide');
+    }
+    const optionClasses = [this.props.optionClassName, 'search-dropdown-option'];
     return (
-      <div>
+      <div className='foody-search-dropdown-component'>
         <input
           id={this.props.inputId}
           placeholder={this.props.inputPlaceholder}
@@ -74,12 +80,12 @@ export default class SearchDropdown extends React.Component {
           onChange={(e) => this.handleInputChange(e.target.value)}
           onBlur={() => { this.onInputBlur() }}
         />
-        <div id={this.props.dropdownId} className={!this.state.isDropdownVisible ? 'hide' : ''}>
+        <div id={this.props.dropdownId} className={dropdownClasses.join(' ')}>
           {this.state.dropdownOptions.map(option =>
             <div
               key={`${this.props.dropdownId}-option-${option[this.props.optionIdField]}`}
               onClick={() => {this.handleOptionClick(option[this.props.optionIdField])}}
-              className={this.props.optionClassName}
+              className={optionClasses.join(' ')}
             >{option[this.props.optionTextField]}</div>)}
         </div>
       </div>
