@@ -11,6 +11,7 @@ const Navigation = () => {
       <div id='nav'>
         <NavLink to='/'>Home</NavLink>
         <NavLink to='/users'>Users</NavLink>
+        <NavLink to='/foods'>Foods</NavLink>
       </div>
     </div>
   );
