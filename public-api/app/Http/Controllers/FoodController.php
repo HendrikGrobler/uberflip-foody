@@ -34,4 +34,9 @@ class FoodController extends Controller
         $response = Http::get("{$this->privateApiUrl}/foods/{$foodId}");
         return $response->json();
     }
+
+    public function count() {
+        $response = Http::get("{$this->privateApiUrl}/foods/count");
+        return $response->json();
+    }
 }

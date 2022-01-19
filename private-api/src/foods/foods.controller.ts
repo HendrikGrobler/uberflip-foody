@@ -33,6 +33,11 @@ export class FoodsController {
     return this.foodsService.findAll(search, skip, take);
   }
 
+  @Get('count')
+  count() {
+    return this.foodsService.count();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.foodsService.findOne(id);

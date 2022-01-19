@@ -40,4 +40,8 @@ export class FoodsService {
   remove(id: number) {
     return this.foodsRepository.delete({ id });
   }
+
+  count() {
+    return this.foodsRepository.count();
+  }
 }

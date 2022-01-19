@@ -9,6 +9,8 @@ export default class Foods extends React.Component {
     foods: [],
     page: 1,
     pageSize: 15,
+    count: 0,
+    pages: 1,
     isLoading: false
   }
 
@@ -18,15 +20,31 @@ export default class Foods extends React.Component {
 
   async fetchFoods() {
     await this.setState({isLoading: true});
-    const response = await axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/foods?page=${this.state.page}&limit=${this.state.pageSize}`)
+    const responses = await Promise.all([
+      axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/foods?page=${this.state.page}&limit=${this.state.pageSize}`),
+      axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/foods/count`)
+    ]);
+    const foods = responses[0].data;
+    const count = parseInt(responses[1].data) || 0;
+    const pages = Math.ceil(count / this.state.pageSize);
     this.setState({
-      foods: response.data,
+      foods,
+      count,
+      pages,
       isLoading: false
     });
   }
 
   canPaginatePrevious() {
     return this.state.page > 1;
+  }
+
+  async handlePaginationFirstClick() {
+    if (!this.canPaginatePrevious()) {
+      return;
+    }
+    await this.setState({page: 1});
+    this.fetchFoods();
   }
 
   async handlePaginationPreviousClick() {
@@ -38,8 +56,7 @@ export default class Foods extends React.Component {
   }
 
   canPaginateNext() {
-    // @todo Improve pagination to use the total/remaining count and prevent edge case where last page has exactly pageSize items
-    return this.state.foods && this.state.foods.length === this.state.pageSize;
+    return this.state.page < this.state.pages;
   }
 
   async handlePaginationNextClick() {
@@ -47,6 +64,14 @@ export default class Foods extends React.Component {
       return;
     }
     await this.setState({page: this.state.page + 1});
+    this.fetchFoods();
+  }
+
+  async handlePaginationLastClick() {
+    if (!this.canPaginateNext()) {
+      return;
+    }
+    await this.setState({page: this.state.pages});
     this.fetchFoods();
   }
 
@@ -78,13 +103,21 @@ export default class Foods extends React.Component {
     if (!canPaginateNext) {
       nextLinkClasses.push('disabled');
     }
+    const itemsStart = ((this.state.page - 1) * this.state.pageSize) + 1;
+    const itemsEnd = itemsStart + (this.state.foods.length - 1);
     return (
       <div className={'pagination-container'}>
+        <a className={previousLinkClasses.join(' ')} onClick={() => this.handlePaginationFirstClick()}>First</a>
+        &nbsp;|&nbsp;
         <a className={previousLinkClasses.join(' ')} onClick={() => this.handlePaginationPreviousClick()}>Prev</a>
         &nbsp;|&nbsp;
-        <span>{this.state.page}</span>
+        <span>Showing items {itemsStart} - {itemsEnd} of {this.state.count}</span>
+        &nbsp;|&nbsp;
+        <span>Page {this.state.page} of {this.state.pages}</span>
         &nbsp;|&nbsp;
         <a className={nextLinkClasses.join(' ')} onClick={() => this.handlePaginationNextClick()}>Next</a>
+        &nbsp;|&nbsp;
+        <a className={nextLinkClasses.join(' ')} onClick={() => this.handlePaginationLastClick()}>Last</a>
       </div>
     );
   }
